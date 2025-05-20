@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../static/media/icon.png">
+    <title>Vendor</title>
+    <style>
+        summary {
+            list-style-type: none;
+        }
+
+        summary::before {
+            content: "➡️";
+            font-size: 1.25em;
+            margin-right: 0.5em;
+        }
+
+        li {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome {{ vendor.company_name }}</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Vendor</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td> {{ vendor.company_name }} </td>
+                <td> {{ vendor.name }} </td>
+                <td> {{ vendor.email }} </td>
+                <td> {{ vendor.contact_number }} </td>
+                <td> {{ vendor.price }} </td>
+            </tr>
+
+        </tbody>
+    </table>
+            <div class="logout">
+                <a href="{% url 'vendor_out' %}"><button>logout</button></a>
+            </div>
+    <div class="upload">
+        <h2>upload</h2>
+        <a href="{% url 'add' %}"><button>add</button></a>
+    </div>
+    <h1>welcome {{ username }} </h1>
+    <h2> packages</h2>
+
+    {% for l in list %}
+    <details>
+        <summary>
+            {{ l.package_name }}
+        </summary>
+        <li>{{ l.destinations }}</li>
+        <li>{{ l.price }}</li>
+        {% for pic in l.photos.all %}
+        <p>
+            <img src="{{ pic.image.url }}" alt="no" height="100px">
+        </p>
+
+        {% endfor %}
+        {% if l.is_approved %}
+        is_approved
+        {% else %}
+        pending
+        {% endif %}
+    </details>
+    {% endfor %}
+</body>
+
+</html>

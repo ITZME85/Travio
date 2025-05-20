@@ -1,0 +1,102 @@
+{% extends 'index.html' %}
+
+
+{% block title %}
+
+<title>packs</title>
+<style>
+    .row {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .box2 {
+        height: 300px;
+        width: 20%;
+        border: black 1px solid;
+
+    }
+
+    .box2 img {
+        width: 100%;
+    }
+
+    h2 {
+        margin-bottom: 0px;
+        margin-top: 0px;
+    }
+
+    .cr {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h1 {
+        text-align: center;
+    }
+</style>
+
+{% endblock%}
+
+
+
+
+
+{% block content %}
+
+
+<!-- <ul>
+    {% for package in packages %}
+    <li>
+        <h2> {{ package.package_name }} </h2>
+        <p>
+            description: {{ package.destinations }} <br>
+            price: {{ package.price }}
+             {% for pic in package.photos.all %}
+        <p> 
+            <img src="{{ pic.image.url }}" alt="no" height="100px"  >
+        </p>
+        
+        {% endfor %}
+        </p>
+    </li>
+    {% endfor %}
+</ul> -->
+
+
+
+<div class="container">
+    {% for package in packages %}
+    {% for pic in package.photos.all %}
+    <h1> packs</h1>
+    <div class="row">
+        <div class="col-md-4 box2">
+            <img src="../../static/media/andaman.jpg" alt="" width="200px">
+            <div class="cr">
+                <h2>Andaman</h2>
+                <p>Price <b>1930</b> </p>
+                <button type="submit">Book</button>
+            </div>
+        </div>
+        <div class="col-md-4 box2">
+            <img src="../../static/media/bali.jpg" alt="" width="200px">
+            <div class="cr">
+                <h2>Bali</h2>
+                <p>Price <b>1930</b> </p>
+                <button type="submit">Book</button>
+            </div>
+        </div>
+        <div class="col-md-4 box2">
+            <img src="{{ pic.image.url }}" alt="" width="200px">
+            <div class="cr">
+                <h2>{{ package.package_name }}</h2>
+                <p>Price <b>{{ package.price }}</b> </p>
+                <button type="submit">Book</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endblock%}

@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Travio tour packages">
+    {% block title %}
+    <title>Travio</title>
+    {% endblock%}
+    <link rel="icon" href="../../static/media/icon.png">
+    <link rel="stylesheet" href="../../static/css/index.css">
+    <script src="" defer></script>
+
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{% url 'index' %}">
+                    <img src="../../static/media/logo.png" alt="logo">
+                </a>
+            </div>
+            <div class="menu-bar">
+                <ul>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'packages' %}">Packages</a></li>
+                    <li><a href="{% url 'vendor_log' %}">Vendors</a></li>
+                    <li><a href="{% url 'user_log' %}">Register</a></li>
+                    <li><a href="{% url 'user_out' %}">Contact</a></li>
+
+                </ul>
+            </div>
+        </nav>
+        {% block content %}
+        <div class="banner">
+            <img src="../../static/media/landing.jpg" alt="">
+        </div>
+    </header>
+
+    <main>
+        
+    </main>
+    {% endblock%}
+    <footer>
+       
+    </footer>
+</body>
+
+</html>
