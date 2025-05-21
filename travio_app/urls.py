@@ -15,6 +15,7 @@ urlpatterns = [
     path('vendor/',v.vendor_dash,name='vendor'),
     path('add_packages/',v.add_package,name='add'),
     path('packages/',v.packages,name='packages'),
+    path('payment_page/',v.payment_page,name='payment_page'),
     
 
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate,login,logout,get_user
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
+from django.urls import reverse
+from django.contrib import messages
 
 
 # Create your views here.
@@ -93,6 +95,7 @@ def log_out(request):
    return redirect('user_log')
 
 def usr(request):
+   # bookings = booking.objects.filter(user = request.user).select_related('package')
    return render(request,'user.html',{'user':request.user})
 
 # @login_required(login_url='vendor_login/')
@@ -136,4 +139,16 @@ def packages(request):
    return render(request,'tour_packages.html',{'packages':packs})
 
 
+# @login_required(login_url='user_log')
+def payment_page(request):
+      package_id = request.session.get('package_id')
+      if not package_id:
+         return redirect('some_error_on_package_list')
+      package = get_object_or_404(TourPackage,id=package_id)
+      return render(request,'payment_page.html',{'package':package})
 
+def book(request,package_id):
+   if not request.user.is_authenticated:
+      return redirect('user_log')
+   request.session['package_id'] = package_id
+   return redirect('payment_page')
