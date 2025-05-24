@@ -1,11 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../../static/media/icon.png">
-    <title>Vendor</title>
+    <link rel="icon" href="{% static 'media/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Vendor Dashboard - Travio</title>
     <style>
         summary {
             list-style-type: none;
@@ -24,59 +27,117 @@
 </head>
 
 <body>
-    <h1>Welcome {{ vendor.company_name }}</h1>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Vendor</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Mobile</th>
-            </tr>
-        </thead>
-        <tbody>
-
-            <tr>
-                <td> {{ vendor.company_name }} </td>
-                <td> {{ vendor.name }} </td>
-                <td> {{ vendor.email }} </td>
-                <td> {{ vendor.contact_number }} </td>
-                <td> {{ vendor.price }} </td>
-            </tr>
-
-        </tbody>
-    </table>
-            <div class="logout">
-                <a href="{% url 'vendor_out' %}"><button>logout</button></a>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'media/logo.png' %}" alt="Travio Logo" class="logo">
+                <h2>{{ vendor.company_name }}</h2>
             </div>
-    <div class="upload">
-        <h2>upload</h2>
-        <a href="{% url 'add' %}"><button>add</button></a>
+            <ul class="nav-links">
+                <li class="active" data-tab="profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile</span>
+                </li>
+                <li data-tab="packages">
+                    <i class="fas fa-box"></i>
+                    <span>Packages</span>
+                </li>
+                <li>
+                    <a href="{% url 'add' %}" class="add-package">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add Package</span>
+                    </a>
+                </li>
+                <li class="logout">
+                    <a href="{% url 'vendor_out' %}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <div class="header">
+                <h1>Vendor Dashboard</h1>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search packages...">
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div class="tab-content active" id="profile">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h2>{{ vendor.company_name }}</h2>
+                            <p>{{ vendor.email }}</p>
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <i class="fas fa-user"></i>
+                            <div class="detail-content">
+                                <label>Owner Name</label>
+                                <p>{{ vendor.name }}</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-phone"></i>
+                            <div class="detail-content">
+                                <label>Contact</label>
+                                <p>{{ vendor.contact_number }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Packages Tab -->
+            <div class="tab-content" id="packages">
+                <div class="packages-grid">
+                    {% for l in list %}
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3>{{ l.package_name }}</h3>
+                            <span class="status-badge {% if l.is_approved %}approved{% else %}pending{% endif %}">
+                                {{ l.is_approved|yesno:"Approved,Pending" }}
+                            </span>
+                        </div>
+                        <div class="package-content">
+                            <div class="package-info">
+                                <p><i class="fas fa-map-marker-alt"></i> {{ l.destinations }}</p>
+                                <p><i class="fas fa-tag"></i> ₹{{ l.price }}</p>
+                            </div>
+                            <div class="package-gallery">
+                                {% for pic in l.photos.all %}
+                                <img src="{{ pic.image.url }}" alt="{{ l.package_name }}">
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
     </div>
-    <h1>welcome {{ username }} </h1>
-    <h2> packages</h2>
 
-    {% for l in list %}
-    <details>
-        <summary>
-            {{ l.package_name }}
-        </summary>
-        <li>{{ l.destinations }}</li>
-        <li>{{ l.price }}</li>
-        {% for pic in l.photos.all %}
-        <p>
-            <img src="{{ pic.image.url }}" alt="no" height="100px">
-        </p>
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.nav-links li[data-tab]').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-links li').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-        {% endfor %}
-        {% if l.is_approved %}
-        is_approved
-        {% else %}
-        pending
-        {% endif %}
-    </details>
-    {% endfor %}
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+    </script>
 </body>
 
 </html>

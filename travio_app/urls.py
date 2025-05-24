@@ -11,11 +11,13 @@ urlpatterns = [
     path('user_login/',v.Userlogin,name='user_log'),
     path('user_logout/',v.log_out,name='user_out'),
     path('vendor_logout/',v.vendor_logout,name='vendor_out'),
-    path('user/',v.usr,name='user'),
+    path('user/dash',v.usr,name='user'),
     path('vendor/',v.vendor_dash,name='vendor'),
     path('add_packages/',v.add_package,name='add'),
     path('packages/',v.packages,name='packages'),
-    path('payment_page/',v.payment_page,name='payment_page'),
-    
+    path('payment_page/<int:package_id>/',v.payment,name='payment_page'),
+    path('payment/success/',v.payment_success,name='payment_success'),
+    path('payment/failed/', v.payment_failed, name='payment_failed'),
+    path('contact/', v.contact, name='contact'),
 
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

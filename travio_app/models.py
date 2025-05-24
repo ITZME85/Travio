@@ -14,8 +14,8 @@ class vendorRegister(models.Model):
 class TourPackage(models.Model):
     vendor = models.ForeignKey(vendorRegister,on_delete=models.CASCADE)
     package_name = models.CharField(max_length=100,blank=False)
-    destinations = models.CharField(max_length=100,blank=False)
-    price = models.DecimalField(max_digits=10,decimal_places=0)
+    description = models.TextField()  # Changed from destinations
+    price = models.DecimalField(max_digits=10,decimal_places=2)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -24,6 +24,14 @@ class AddPhotos(models.Model):
     image = models.ImageField(upload_to='tour_pics/')
     created_at = models.DateTimeField(auto_now_add=True)
 
+class Order(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    package = models.ForeignKey(TourPackage,on_delete=models.CASCADE)
+    razorpay_order_id = models.CharField(max_length=1000)
+    razorpay_payment_id = models.CharField(max_length=1000)
+    razorpay_signature = models.CharField(max_length=1000)
+    status = models.CharField(max_length=100,default='created')
+    booked_at = models.DateTimeField(auto_now_add=True)
 
 
 

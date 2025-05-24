@@ -1,11 +1,17 @@
 from django.shortcuts import render,redirect,get_object_or_404
+import razorpay.errors
 from .forms import*
 from django.contrib.auth import authenticate,login,logout,get_user
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseBadRequest
 from django.contrib.auth.hashers import make_password,check_password
+from django.conf import settings
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
-from django.contrib import messages
+
+
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 
 
 # Create your views here.
@@ -72,22 +78,26 @@ def register(request):
 
 def Userlogin(request):
     error_message = None
+    next_url = request.session.get('next', 'user')
+
     if request.method == 'POST':
-       form = LogInForm(request.POST)
-       if form.is_valid():
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password')
-        user = authenticate(username=username,password=password)
-        # user.is_active = True
-        if user is not None:
-            login(request,user)
-            return redirect('user')
-        else:
-            error_message = 'invalid username or password'
-            return render(request,'user_log.html',{'form':form,'error_message':error_message})
-        
+        form = LogInForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                # Clear the session
+                if 'next' in request.session:
+                    next_url = request.session.pop('next')
+                return redirect(next_url)
+            else:
+                error_message = 'Invalid username or password'
+                return render(request, 'user_log.html', {'form': form, 'error_message': error_message})
+    
     form = LogInForm
-    return render(request,'user_log.html',{'form':form})
+    return render(request, 'user_log.html', {'form': form})
 
 def log_out(request):
    logout(request)
@@ -123,10 +133,10 @@ def add_package(request):
     #      tour_package.vendor=vendorRegister.objects.get(id=request.session['vendor_id'])
     #      form.save()
         package_name = request.POST['package_name']
-        destinations = request.POST['destinations']
+        destinations = request.POST['description']
         price = request.POST['price']
         images = request.FILES.getlist('photos')
-        package = TourPackage.objects.create(vendor=vendor,package_name=package_name,price=price,destinations=destinations)
+        package = TourPackage.objects.create(vendor=vendor,package_name=package_name,price=price,description=destinations)
         for img in images:
            AddPhotos.objects.create(package=package,image=img)
         return  redirect('vendor')
@@ -139,16 +149,124 @@ def packages(request):
    return render(request,'tour_packages.html',{'packages':packs})
 
 
-# @login_required(login_url='user_log')
-def payment_page(request):
-      package_id = request.session.get('package_id')
-      if not package_id:
-         return redirect('some_error_on_package_list')
-      package = get_object_or_404(TourPackage,id=package_id)
-      return render(request,'payment_page.html',{'package':package})
+@login_required(login_url='user_log')
+def payment(request, package_id):
+    try:
+        # Get the package and verify it exists
+        package = get_object_or_404(TourPackage, id=package_id, is_approved=True)
+        
+        # Check if there's an existing unpaid order for this package and user
+        existing_order = Order.objects.filter(
+            user=request.user,
+            package=package,
+            status='Pending'
+        ).first()
+        
+        if existing_order:
+            order = existing_order
+        else:
+            # Create new order
+            order = Order.objects.create(
+                user=request.user,
+                package=package,
+                status='Pending'
+            )
+            
+            # Create Razorpay order
+            razorpay_order = client.order.create({
+                "amount": int(package.price * 100),  # Convert to paise
+                "currency": "INR",
+                "payment_capture": 1,
+                "notes": {
+                    "package_name": package.package_name,
+                    "user_email": request.user.email
+                }
+            })
+            
+            order.razorpay_order_id = razorpay_order['id']
+            order.save()
 
-def book(request,package_id):
-   if not request.user.is_authenticated:
-      return redirect('user_log')
-   request.session['package_id'] = package_id
-   return redirect('payment_page')
+        context = {
+            "package": package,
+            "order": order,
+            "razorpay_key_id": settings.RAZORPAY_KEY_ID,
+            "razorpay_order_id": order.razorpay_order_id,
+            "amount": int(package.price * 100),
+            "user": request.user,
+            "callback_url": request.build_absolute_uri(reverse('payment_success'))
+        }
+        
+        return render(request, 'payment_page.html', context)
+        
+    except Exception as e:
+        # Log the error for debugging
+        
+        return redirect('payment_failed')
+
+# @login_required(login_url='user_log')
+@csrf_exempt
+def payment_success(request):
+    if request.method == 'POST':
+        try:
+            # Get payment details
+            payment_id = request.POST.get('razorpay_payment_id')
+            order_id = request.POST.get('razorpay_order_id')
+            signature = request.POST.get('razorpay_signature')
+
+            # Verify order exists
+            order = get_object_or_404(Order, razorpay_order_id=order_id)
+
+            # Verify payment signature
+            client.utility.verify_payment_signature({
+                'razorpay_order_id': order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            })
+
+            # Update order status
+            order.razorpay_payment_id = payment_id
+            order.razorpay_signature = signature
+            order.status = 'Paid'
+            order.save()
+
+            return render(request, 'payment_success.html', {'order': order})
+            
+        except Exception as e:
+            print(f"Payment Success Error: {str(e)}")
+            return redirect('payment_failed')
+            
+    return HttpResponseBadRequest()
+
+# @login_required(login_url='user_log')
+def payment_failed(request):
+    context = {
+        'error_message': request.GET.get('error', 'Transaction failed. Please try again.')
+    }
+    return render(request, 'payment_failed.html', context)
+
+def contact(request):
+    if request.method == 'POST':
+        # Add your email sending logic here
+        return redirect('index')
+    return render(request, 'contact.html')
+
+@login_required(login_url='user_log')
+def user_dashboard(request):
+    if request.user.is_authenticated:
+        # Get user's bookings
+        bookings = Order.objects.filter(
+            user=request.user
+        ).select_related('package').prefetch_related('package__photos').order_by('-created_at')
+
+        # Get user's stats
+        total_bookings = bookings.count()
+        total_places = bookings.values('package__destinations').distinct().count()
+        
+        context = {
+            'user': request.user,
+            'bookings': bookings,
+            'total_bookings': total_bookings,
+            'total_places': total_places
+        }
+        return render(request, 'user.html', context)
+    return redirect('user_log')

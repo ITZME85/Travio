@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'media/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/payment_success.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Payment Successful - Travio</title>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-box">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="success-header">
+                <img src="{% static 'media/logo.png' %}" alt="Travio Logo" class="logo">
+                <h1>Payment Successful!</h1>
+                <p>Thank you for booking with Travio</p>
+            </div>
+            <div class="order-details">
+                <div class="detail-row">
+                    <span>Package Name:</span>
+                    <strong>{{ order.package.package_name }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Order ID:</span>
+                    <strong>{{ order.razorpay_order_id }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Amount Paid:</span>
+                    <strong>₹{{ order.package.price }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Booked By:</span>
+                    <strong>{{ order.user.username }}</strong>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'packages' %}" class="btn secondary-btn">
+                    <i class="fas fa-search"></i>
+                    Browse More Packages
+                </a>
+                <a href="{% url 'user' %}" class="btn primary-btn">
+                    <i class="fas fa-user"></i>
+                    Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

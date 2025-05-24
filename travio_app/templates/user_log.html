@@ -1,20 +1,48 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../../static/media/icon.png">
-    <title>User_Login</title>
+    <link rel="icon" href="{% static 'media/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/user_login.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Travio - Login</title>
 </head>
 <body>
-    <h1>User Login</h1>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">submit</button>
-    </form>
-        {{ error_message }}
-
-
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="{% static 'media/logo.png' %}" alt="Travio Logo" class="logo">
+                <h1>Welcome Back</h1>
+                <p>Login to explore amazing destinations</p>
+            </div>
+            
+            <form action="" method="post" class="login-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    {{ form.username }}
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    {{ form.password }}
+                </div>
+                {% if error_message %}
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ error_message }}
+                </div>
+                {% endif %}
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Don't have an account? <a href="{% url 'user_reg' %}">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

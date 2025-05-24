@@ -1,18 +1,56 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../../static/media/icon.png">
-    <title>User_Register</title>
-    
+    <link rel="icon" href="{% static 'media/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Travio - Register</title>
 </head>
 <body>
-    <h1>User Register</h1>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">submit</button>
-    </form>
+    <div class="register-container">
+        <div class="register-box">
+            <div class="register-header">
+                <img src="{% static 'media/logo.png' %}" alt="Travio Logo" class="logo">
+                <h1>Create Account</h1>
+                <p>Join us to start your journey</p>
+            </div>
+            
+            <form action="" method="post" class="register-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    {{ form.username }}
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    {{ form.password1 }}
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    {{ form.password2 }}
+                </div>
+                {% if form.errors %}
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ form.errors }}
+                </div>
+                {% endif %}
+                <button type="submit" class="register-btn">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </form>
+            
+            <div class="register-footer">
+                <p>Already have an account? <a href="{% url 'user_log' %}">Login</a></p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

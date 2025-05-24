@@ -1,0 +1,133 @@
+:root {
+    --primary-color: #2C3E50;
+    --accent-color: #E74C3C;
+    --text-color: #333;
+    --light-bg: #f4f4f4;
+}
+
+.packages-container {
+    max-width: 1200px;
+    margin: 100px auto;
+    padding: 0 20px;
+}
+
+.packages-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.packages-header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.packages-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.package-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.package-card:hover {
+    transform: translateY(-5px);
+}
+
+.package-image {
+    position: relative;
+    height: 200px;
+}
+
+.package-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.package-overlay {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.7);
+    padding: 8px 15px;
+    border-radius: 20px;
+}
+
+.price {
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.package-content {
+    padding: 20px;
+}
+
+.package-content h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.description {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.package-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.vendor-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+}
+
+.vendor-info i {
+    color: var(--accent-color);
+}
+
+.book-btn {
+    background: var(--accent-color);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease;
+}
+
+.book-btn:hover {
+    background: #d44332;
+}
+
+@media (max-width: 768px) {
+    .packages-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .packages-header h1 {
+        font-size: 2rem;
+    }
+}

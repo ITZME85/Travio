@@ -5,14 +5,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Travio tour packages">
+    <meta name="description" content="Travio - Your Ultimate Travel Companion">
     {% block title %}
-    <title>Travio</title>
+    <title>Travio - Explore the World</title>
     {% endblock%}
-    <link rel="icon" href="../../static/media/icon.png">
-    <link rel="stylesheet" href="../../static/css/index.css">
-    <script src="" defer></script>
-
+    <link rel="icon" href="{% static 'media/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/packages.css' %}">
+    <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
@@ -20,33 +21,83 @@
         <nav>
             <div class="logo">
                 <a href="{% url 'index' %}">
-                    <img src="../../static/media/logo.png" alt="logo">
+                    <img src="{% static 'media/logo.png' %}" alt="Travio Logo">
                 </a>
             </div>
             <div class="menu-bar">
                 <ul>
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="{% url 'packages' %}">Packages</a></li>
-                    <li><a href="{% url 'vendor_log' %}">Vendors</a></li>
-                    <li><a href="{% url 'user_log' %}">Register</a></li>
-                    <li><a href="{% url 'user_out' %}">Contact</a></li>
-
+                    <li><a href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="{% url 'packages' %}"><i class="fas fa-suitcase"></i> Packages</a></li>
+                    <li><a href="{% url 'vendor_log' %}"><i class="fas fa-handshake"></i> Vendors</a></li>
+                    <li><a href="{% url 'user_log' %}"><i class="fas fa-user"></i> Register</a></li>
+                    <li><a href="{% url 'contact' %}"><i class="fas fa-envelope"></i> Contact</a></li>
                 </ul>
             </div>
         </nav>
         {% block content %}
         <div class="banner">
-            <img src="../../static/media/landing.jpg" alt="">
+            <div class="banner-content">
+                <h1>Discover Your Next Adventure</h1>
+                <p>Explore breathtaking destinations with our curated travel packages</p>
+                <a href="{% url 'packages' %}" class="cta-button">Start Exploring</a>
+            </div>
         </div>
     </header>
 
     <main>
-        
+        <section class="about-section">
+            <div class="left">
+                <img src="../../static/media/banner1.jpg" alt="Travel Experience">
+            </div>
+            <div class="right">
+                <h2>Welcome to Travio</h2>
+                <p class="subtitle">Your Journey Begins Here</p>
+                <div class="about-content">
+                    <p>
+                        At Travio, we believe every journey tells a story. Since our establishment, we've been crafting
+                        unforgettable travel experiences for adventurers like you. Our carefully curated packages combine
+                        comfort, excitement, and cultural immersion to create memories that last a lifetime.
+                    </p>
+                    <div class="features">
+                        <div class="feature-item">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <h3>Handpicked Destinations</h3>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3>Safe Travel</h3>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-heart"></i>
+                            <h3>Personalized Experience</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
-    {% endblock%}
+{% endblock %}
     <footer>
-       
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                <p><i class="fas fa-envelope"></i> info@travio.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Travio. All rights reserved.</p>
+        </div>
     </footer>
+    
 </body>
 
 </html>

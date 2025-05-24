@@ -1,19 +1,93 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
+    <link rel="icon" href="{% static 'media/icon.png' %}">
+    <link rel="stylesheet" href="../../static/css/paymetn.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Payment - {{ package.package_name }} | Travio</title>
 </head>
 
 <body>
-    {{ package.package_name }}
-    <form>
-        <script src="https://checkout.razorpay.com/v1/payment-button.js" data-payment_button_id="pl_QXauT68G3uiqe5"
-            async> </script>
-    </form>
+    <div class="payment-container">
+        <div class="payment-box">
+            <div class="payment-header">
+                <img src="{% static 'media/logo.png' %}" alt="Travio Logo" class="logo">
+                <h1>Complete Your Booking</h1>
+                <p>Secure payment powered by Razorpay</p>
+            </div>
+
+            <div class="package-details">
+                <div class="package-image">
+                    {% if package.photos.all %}
+                    <img src="{{ package.photos.first.image.url }}" alt="{{ package.package_name }}">
+                    {% else %}
+                    <img src="{% static 'media/default-package.jpg' %}" alt="{{ package.package_name }}">
+                    {% endif %}
+                </div>
+                <div class="package-info">
+                    <h2>{{ package.package_name }}</h2>
+                    <p class="description">{{ package.description|truncatewords:20 }}</p>
+                    <div class="price-tag">
+                        <i class="fas fa-tag"></i>
+                        <span>₹{{ package.price }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-details">
+                <div class="detail-row">
+                    <span>Package Price</span>
+                    <span>₹{{ package.price }}</span>
+                </div>
+                <div class="detail-row">
+                    <span>Processing Fee</span>
+                    <span>₹0</span>
+                </div>
+                <div class="detail-row total">
+                    <span>Total Amount</span>
+                    <span>₹{{ package.price }}</span>
+                </div>
+            </div>
+
+            <form action="{% url 'payment_success' %}" method="POST" class="payment-form">
+                <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="{{ razorpay_key_id }}"
+                    data-amount="{{ amount }}" data-currency="INR" data-order_id="{{ razorpay_order_id }}"
+                    data-buttontext="Proceed to Pay" data-name="TRAVIO"
+                    data-description="Payment for {{ package.package_name }}"
+                    data-prefill.name="{{ user.username }}" data-prefill.email="{{ user.email }}"
+                    data-theme.color="#E74C3C">
+                </script>
+                <input type="hidden" value="hidden Element" name="hidden">
+            </form>
+
+            <div class="security-info">
+                <i class="fas fa-shield-alt"></i>
+                <p>Your payment is secured by Razorpay's encryption</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var options = {
+            "handler": function (response) {
+                document.querySelector("form").submit();
+            },
+            "modal": {
+                "ondismiss": function() {
+                    window.location.href = "{% url 'payment_failed' %}?error=Payment+cancelled+by+user";
+                }
+            }
+        };
+        var rzp = new Razorpay(options);
+        document.querySelector("form").onclick = function(e) {
+            rzp.open();
+            e.preventDefault();
+        }
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed</title>
+</head>
+<body>
+    <h2>Payment Failed</h2>
+    <p>Sorry {{ user.username }}, your payment for {{ package.package_name }} was unsuccessful.</p>
+    <p>Error: {{ error_message }}</p>
+    <a href="{% url 'packages' %}">Return to Packages</a>
+</body>
+</html>
