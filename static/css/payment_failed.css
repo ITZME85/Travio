@@ -1,0 +1,164 @@
+:root {
+    --primary-color: #2C3E50;
+    --accent-color: #E74C3C;
+    --error-color: #e74c3c;
+    --text-color: #333;
+    --light-bg: #f4f4f4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('../media/failed-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.failed-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+}
+
+.failed-box {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+.failed-icon {
+    font-size: 80px;
+    color: var(--error-color);
+    margin-bottom: 20px;
+    animation: shake 0.5s ease;
+}
+
+.logo {
+    height: 50px;
+    margin-bottom: 20px;
+}
+
+.failed-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 2rem;
+}
+
+.failed-header p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.error-details {
+    background: var(--light-bg);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row span {
+    color: #666;
+}
+
+.detail-row strong {
+    color: var(--primary-color);
+}
+
+.error-message {
+    background: #fde8e8;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--error-color);
+}
+
+.error-message i {
+    font-size: 20px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.primary-btn {
+    background: var(--accent-color);
+    color: white;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    background: #d44332;
+}
+
+.secondary-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.secondary-btn:hover {
+    transform: translateY(-2px);
+    background: #243442;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+@media (max-width: 480px) {
+    .failed-container {
+        padding: 10px;
+    }
+    
+    .failed-box {
+        padding: 20px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .failed-icon {
+        font-size: 60px;
+    }
+}

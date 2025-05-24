@@ -101,14 +101,14 @@
                     {% if bookings %}
                         {% for booking in bookings %}
                         <div class="booking-card">
-                            <div class="booking-image">
+                            <div class="booking-image" >
                                 {% if booking.package.photos.first %}
                                     <img src="{{ booking.package.photos.first.image.url }}" alt="{{ booking.package.package_name }}">
                                 {% else %}
                                     <img src="{% static 'media/default-package.jpg' %}" alt="Default Package Image">
                                 {% endif %}
                             </div>
-                            <div class="booking-details">
+                            <div class="booking-details" >
                                 <h3>{{ booking.package.package_name }}</h3>
                                 <div class="booking-info">
                                     <p><i class="fas fa-calendar"></i> Booked on: {{ booking.created_at|date:"d M Y" }}</p>

@@ -104,9 +104,7 @@ def log_out(request):
 #    return HttpResponse("You are logged out")
    return redirect('user_log')
 
-def usr(request):
-   # bookings = booking.objects.filter(user = request.user).select_related('package')
-   return render(request,'user.html',{'user':request.user})
+
 
 # @login_required(login_url='vendor_login/')
 def vendor_dash(request):
@@ -133,10 +131,10 @@ def add_package(request):
     #      tour_package.vendor=vendorRegister.objects.get(id=request.session['vendor_id'])
     #      form.save()
         package_name = request.POST['package_name']
-        destinations = request.POST['description']
+        description = request.POST['description']
         price = request.POST['price']
         images = request.FILES.getlist('photos')
-        package = TourPackage.objects.create(vendor=vendor,package_name=package_name,price=price,description=destinations)
+        package = TourPackage.objects.create(vendor=vendor,package_name=package_name,price=price,description=description)
         for img in images:
            AddPhotos.objects.create(package=package,image=img)
         return  redirect('vendor')
@@ -152,10 +150,7 @@ def packages(request):
 @login_required(login_url='user_log')
 def payment(request, package_id):
     try:
-        # Get the package and verify it exists
-        package = get_object_or_404(TourPackage, id=package_id, is_approved=True)
-        
-        # Check if there's an existing unpaid order for this package and user
+        package = get_object_or_404(TourPackage, id=package_id, is_approved=True)  
         existing_order = Order.objects.filter(
             user=request.user,
             package=package,
@@ -165,16 +160,16 @@ def payment(request, package_id):
         if existing_order:
             order = existing_order
         else:
-            # Create new order
+            
             order = Order.objects.create(
                 user=request.user,
                 package=package,
                 status='Pending'
             )
             
-            # Create Razorpay order
+            
             razorpay_order = client.order.create({
-                "amount": int(package.price * 100),  # Convert to paise
+                "amount": int(package.price * 100),  
                 "currency": "INR",
                 "payment_capture": 1,
                 "notes": {
@@ -199,8 +194,6 @@ def payment(request, package_id):
         return render(request, 'payment_page.html', context)
         
     except Exception as e:
-        # Log the error for debugging
-        
         return redirect('payment_failed')
 
 # @login_required(login_url='user_log')
@@ -208,22 +201,19 @@ def payment(request, package_id):
 def payment_success(request):
     if request.method == 'POST':
         try:
-            # Get payment details
             payment_id = request.POST.get('razorpay_payment_id')
             order_id = request.POST.get('razorpay_order_id')
             signature = request.POST.get('razorpay_signature')
 
-            # Verify order exists
+            
             order = get_object_or_404(Order, razorpay_order_id=order_id)
 
-            # Verify payment signature
             client.utility.verify_payment_signature({
                 'razorpay_order_id': order_id,
                 'razorpay_payment_id': payment_id,
                 'razorpay_signature': signature
             })
 
-            # Update order status
             order.razorpay_payment_id = payment_id
             order.razorpay_signature = signature
             order.status = 'Paid'
@@ -256,11 +246,11 @@ def user_dashboard(request):
         # Get user's bookings
         bookings = Order.objects.filter(
             user=request.user
-        ).select_related('package').prefetch_related('package__photos').order_by('-created_at')
+        ).select_related('package').prefetch_related('package__photos')
 
         # Get user's stats
         total_bookings = bookings.count()
-        total_places = bookings.values('package__destinations').distinct().count()
+        total_places = bookings.values('package__description').distinct().count()
         
         context = {
             'user': request.user,
@@ -270,3 +260,7 @@ def user_dashboard(request):
         }
         return render(request, 'user.html', context)
     return redirect('user_log')
+
+# def usr(request):
+#    bookings = Order.objects.filter(user = request.user).select_related('package')
+#    return render(request,'user.html',{'user':request.user})
