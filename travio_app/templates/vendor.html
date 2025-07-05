@@ -119,6 +119,13 @@
                                 {% endfor %}
                             </div>
                         </div>
+                        <div class="package-buttons">
+                            <a href="{% url 'edit' l.pk %}">Edit</a>
+                            <form action="{% url 'delete' l.pk %}" method="post" onclick="return confirm('confirm ')">
+                                {% csrf_token %}
+                                <button>Delete</button>
+                            </form>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>

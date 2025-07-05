@@ -42,7 +42,7 @@ def vendor_reg(request):
                 user.save()
                 return redirect('vendor_log')     
     else:
-        form=vendorRegisterForm
+        form = vendorRegisterForm()
     return render(request,'vendor_reg.html',{'form':form})
 
 def vendor_log(request):
@@ -63,7 +63,7 @@ def vendor_log(request):
             return render(request,'vendor_log.html',{'form':form,'error_message':error_message})
 
    else:
-        form = VendorLoginForm
+        form = VendorLoginForm()
    return render(request,'vendor_log.html',{'form':form})
 
 def register(request):
@@ -73,7 +73,7 @@ def register(request):
          form.save()
          return redirect('index')
     else:
-      form = RegistraionForm
+      form = RegistraionForm()
     return render(request,'user_reg.html',{'form':form})
 
 def Userlogin(request):
@@ -96,7 +96,7 @@ def Userlogin(request):
                 error_message = 'Invalid username or password'
                 return render(request, 'user_log.html', {'form': form, 'error_message': error_message})
     
-    form = LogInForm
+    form = LogInForm()
     return render(request, 'user_log.html', {'form': form})
 
 def log_out(request):
@@ -136,7 +136,7 @@ def add_package(request):
         images = request.FILES.getlist('photos')
         package = TourPackage.objects.create(vendor=vendor,package_name=package_name,price=price,description=description)
         for img in images:
-           AddPhotos.objects.create(package=package,image=img)
+           AddPhotos.objects.create(package=package, image=img)
         return  redirect('vendor')
    else:
       form = TourPackageForm()
@@ -260,6 +260,38 @@ def user_dashboard(request):
         }
         return render(request, 'user.html', context)
     return redirect('user_log')
+
+def delete(request,pk):
+    package = get_object_or_404(TourPackage,pk=pk)
+    if request.method == "POST":
+        package.delete()
+        return redirect('vendor')
+    
+def edit(request,pk):
+    package = get_object_or_404(TourPackage,pk=pk)
+    if request.method == 'POST':
+        form = TourPackageForm(request.POST,instance=package)
+        if form.is_valid():
+            form.save()
+
+            for photo in package.photos.all():
+                keep = request.POST.get(f'keep_photo_{photo.id}','1')
+                if keep == '0':
+                    photo.delete()
+            
+            images = request.FILES.getlist('photos')
+            for img in images:
+                AddPhotos.objects.create(package=package,image=img)
+            return redirect('vendor')
+    else:
+        form = TourPackageForm(instance=package)
+        pic = package.photos.all()
+    return render(request,'edit.html',{
+        'form':form,
+        "photos":pic,
+    })
+
+    
 
 # def usr(request):
 #    bookings = Order.objects.filter(user = request.user).select_related('package')

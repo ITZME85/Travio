@@ -19,7 +19,10 @@
     <div class="dashboard">
         <nav class="sidebar">
             <div class="sidebar-header">
-                <img src="{% static 'media/logo.png' %}" alt="Travio Logo" class="logo">
+                <a href="{% url 'index' %}">
+                    <img src="{% static 'media/logo.png' %}" alt="Travio Logo" class="logo">
+                </a>
+                
                 <h2>Welcome, {{ user.username }}</h2>
             </div>
             <ul class="nav-links">
@@ -98,7 +101,11 @@
             <!-- Bookings Tab -->
             <div class="tab-content" id="bookings">
                 <div class="bookings-list">
-                    {% if bookings %}
+                    <!-- <h3 id="hi">Browse Packages</h3> -->
+                    
+                    
+                        {% if bookings %}
+                        <div class="grid">
                         {% for booking in bookings %}
                         <div class="booking-card">
                             <div class="booking-image" >
@@ -114,11 +121,17 @@
                                     <p><i class="fas fa-calendar"></i> Booked on: {{ booking.created_at|date:"d M Y" }}</p>
                                     <p><i class="fas fa-tag"></i> Amount Paid: ₹{{ booking.package.price }}</p>
                                     <p><i class="fas fa-receipt"></i> Order ID: {{ booking.razorpay_order_id }}</p>
+                                    <p> {{ booking.status }} </p>
                                 </div>
                             </div>
                         </div>
                         {% endfor %}
-                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-suitcase"></i>
+                            <p>Start exploring and book your first travel package!</p>
+                            <a href="{% url 'packages' %}" class="btn-explore">Browse Packages</a>
+                        </div>
+                        {% else %}
                         <div class="empty-state">
                             <i class="fas fa-suitcase"></i>
                             <h3>No Bookings Yet</h3>
@@ -126,6 +139,8 @@
                             <a href="{% url 'packages' %}" class="btn-explore">Browse Packages</a>
                         </div>
                     {% endif %}
+                    </div>
+                    
                 </div>
             </div>
 

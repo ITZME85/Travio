@@ -19,5 +19,7 @@ urlpatterns = [
     path('payment/success/',v.payment_success,name='payment_success'),
     path('payment/failed/', v.payment_failed, name='payment_failed'),
     path('contact/', v.contact, name='contact'),
+    path('list<int:pk>/delete',v.delete,name='delete'),
+    path('list<int:pk>/edit',v.edit,name='edit'),
 
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

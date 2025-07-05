@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Upload Package - Travio</title>
 </head>
+
 <body>
     <div class="upload-container">
         <div class="upload-box">
@@ -40,7 +42,18 @@
                     </label>
                     <input type="file" id="photos" name="photos" multiple required>
                 </div>
-                <div id="preview" class="image-preview"></div>
+                <div id="existing-photos" class="image-preview">
+                    {% if photos %}
+                        {% for photo in photos %}
+                            <div class="image-box existing-photo" data-photo-id="{{ photo.id }}">
+                                <img src="{{ photo.image.url }}" alt="Package Photo" class="preview-image">
+                                <button type="button" class="remove-btn" onclick="removeExistingPhoto({{ photo.id }})">&times;</button>
+                                <input type="hidden" name="keep_photo_{{ photo.id }}" value="1" id="keep_photo_{{ photo.id }}">
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div id="new-photos" class="image-preview"></div>
                 <div class="button-group">
                     <button type="submit" class="submit-btn primary-btn">
                         <i class="fas fa-cloud-upload-alt"></i>
@@ -58,18 +71,17 @@
     <script>
         // Image preview functionality
         const input = document.querySelector('#photos');
-        const preview = document.querySelector('#preview');
+        const newPreview = document.querySelector('#new-photos');
 
         let selectedFiles = [];
 
         input.addEventListener('change', function () {
-            selectedFiles = selectedFiles.concat(Array.from(this.files));
-
+            selectedFiles = Array.from(this.files); // Only keep the latest selection
             updatePreview();
         });
 
         function updatePreview() {
-            preview.innerHTML = '';
+            newPreview.innerHTML = '';
 
             selectedFiles.forEach((file, index) => {
                 const reader = new FileReader();
@@ -83,27 +95,37 @@
 
                     const btn = document.createElement('button');
                     btn.innerHTML = '&times;';
-
                     btn.classList.add('remove-btn');
                     btn.onclick = function () {
                         selectedFiles.splice(index, 1);
-
                         updateInput();
                         updatePreview();
                     };
                     container.appendChild(img);
                     container.appendChild(btn);
-                    preview.appendChild(container);
+                    newPreview.appendChild(container);
                 };
                 reader.readAsDataURL(file);
             });
         }
-        function updateInput(){
-            const dataTransfer = new DataTransfer();
 
+        function updateInput() {
+            const dataTransfer = new DataTransfer();
             selectedFiles.forEach(file => dataTransfer.items.add(file));
             input.files = dataTransfer.files;
         }
+
+        function removeExistingPhoto(photoId) {
+            const photoBox = document.querySelector('.existing-photo[data-photo-id="' + photoId + '"]');
+            if (photoBox) {
+                photoBox.style.display = 'none';
+            }
+            const keepInput = document.getElementById('keep_photo_' + photoId);
+            if (keepInput) {
+                keepInput.value = "0";
+            }
+        }
     </script>
 </body>
+
 </html>
